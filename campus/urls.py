@@ -13,4 +13,6 @@ urlpatterns = [
 
     path('showstudent/', views.show_student, name="show_student"),
     path('showstudentcourse/', views.show_student_course, name="show_student_course"),
+
+    path('addcontent/', views.add_content, name="add_content"),
 ]

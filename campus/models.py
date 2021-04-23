@@ -24,6 +24,7 @@ class Teachers(models.Model):
 class Courses(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=1450.00)
 
 
 class Subjects(models.Model):
@@ -37,6 +38,7 @@ class Content(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=30)
     content = models.FileField(blank=True)
-    date_start = models.DateField(blank=True)
+    date_start = models.DateField(auto_now_add=True, blank=True)
     date_end = models.DateField(blank=True)
     subject_id = models.IntegerField()
+    teacher_id = models.IntegerField()

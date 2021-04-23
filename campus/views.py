@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Students, Teachers, Courses, Subjects
@@ -47,22 +47,28 @@ def login(request):
 
     # Get user instance from email
     student = Students.objects.get(email=email)
-    if student is not None:
-
-        if check_password(password, student.password):
-            response = JsonResponse(dict(student=list(Students.objects.values('id', 'fullname', 'email')
-                                                     .filter(id=student.id))))
-
-        response = 400
-        teacher = Teachers.objects.get(email=email)
-
-    if teacher is not None:
-        if check_password(password, teacher.password):
-            response = JsonResponse(dict(teacher=list(Teachers.objects.values('id', 'fullname', 'email')
-                                                     .filter(id=teacher.id))))
+    if check_password(password, student.password):
+        response = JsonResponse(dict(student=list(Students.objects.values('id', 'fullname', 'email')
+                                                  .filter(id=student.id))))
+    else:
         response = 400
 
-    return Response(response)
+    # if student is not None:
+    #
+    #     if check_password(password, student.password):
+    #         response = JsonResponse(dict(student=list(Students.objects.values('id', 'fullname', 'email')
+    #                                                  .filter(id=student.id))))
+    #
+    #     response = 400
+    #     teacher = Teachers.objects.get(email=email)
+    #
+    # if teacher is not None:
+    #     if check_password(password, teacher.password):
+    #         response = JsonResponse(dict(teacher=list(Teachers.objects.values('id', 'fullname', 'email')
+    #                                                  .filter(id=teacher.id))))
+    #     response = 400
+
+    return HttpResponse(response)
 
 
 @api_view(['POST'])
@@ -105,6 +111,24 @@ def add_subject(request):
         subject = Subjects.objects.create(name=name, description=description, teacher_id=teacher_id,
                                           course_id=course_id)
         subject.save()
+        return Response(200)
+    except Exception as e:
+        print(e)
+        return Response(400)
+
+@api_view(['POST'])
+def add_content(request):
+    title = request.data['title']
+    description = request.data['description']
+    content = request.FILES['content']
+    date_end = request.data['date_end']
+    subject_id = request.data['subject_id']
+    teacher_id = request.data['teacher_id']
+
+    try:
+        content = Subjects.objects.create(title=title, description=description, content=content,
+                                          date_end=date_end, subject_id=subject_id, teacher_id=teacher_id)
+        content.save()
         return Response(200)
     except Exception as e:
         print(e)
