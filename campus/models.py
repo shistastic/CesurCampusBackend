@@ -24,7 +24,7 @@ class Teachers(models.Model):
 class Courses(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
-    price = models.DecimalField(max_digits=5, decimal_places=2, default=1450.00)
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=1450.00, blank=True)
 
 
 class Subjects(models.Model):

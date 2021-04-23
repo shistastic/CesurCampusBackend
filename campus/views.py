@@ -1,7 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Students, Teachers, Courses, Subjects
+from .models import Students, Teachers, Courses, Subjects, Content
 from django.contrib.auth.hashers import make_password, check_password
 
 
@@ -126,10 +126,35 @@ def add_content(request):
     teacher_id = request.data['teacher_id']
 
     try:
-        content = Subjects.objects.create(title=title, description=description, content=content,
+        content = Content.objects.create(title=title, description=description, content=content,
                                           date_end=date_end, subject_id=subject_id, teacher_id=teacher_id)
         content.save()
         return Response(200)
     except Exception as e:
         print(e)
         return Response(400)
+
+@api_view(['POST'])
+def show_subject_content(request):
+    response = JsonResponse(
+        dict(content=list(Content.objects.values('title', 'description', 'content', 'date_start', 'date_end')
+                          .filter(subject_id=request.data['subject_id']))))
+
+    return response
+
+
+@api_view(['POST'])
+def show_course(request):
+    response = JsonResponse(
+        dict(course=list(Courses.objects.values('name', 'description', 'price').filter(id=request.data['id']))))
+
+    return response
+
+
+@api_view(['POST'])
+def show_all_courses(request):
+    response = JsonResponse(
+        dict(course=list(Courses.objects.values('name', 'description', 'price'))))
+
+    return response
+
