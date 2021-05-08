@@ -10,11 +10,12 @@ from django.contrib.auth.hashers import make_password, check_password
 @api_view(['POST'])
 def add_student(request):
     fullname = request.data['fullname']
+    dni = request.data['dni']
     email = request.data['email']
     password = make_password(request.data['password'])
 
     try:
-        student = Students.objects.create(fullname=fullname, email=email, password=password)
+        student = Students.objects.create(fullname=fullname, dni=dni, email=email, password=password)
         student.save()
         return Response(200)
     except Exception as e:
@@ -42,13 +43,13 @@ def show_student_course(request):
 
 @api_view(['POST'])
 def login(request):
-    email = request.data['email']
+    dni = request.data['dni']
     password = request.data['password']
 
     # Get user instance from email
-    student = Students.objects.get(email=email)
+    student = Students.objects.get(dni=dni)
     if check_password(password, student.password):
-        response = JsonResponse(dict(student=list(Students.objects.values('id', 'fullname', 'email')
+        response = JsonResponse(dict(student=list(Students.objects.values('id', 'dni', 'fullname', 'email')
                                                   .filter(id=student.id))))
     else:
         response = 400
@@ -146,7 +147,8 @@ def show_subject_content(request):
 @api_view(['POST'])
 def show_course(request):
     response = JsonResponse(
-        dict(course=list(Courses.objects.values('name', 'description', 'price').filter(id=request.data['id']))))
+        dict(course=list(Courses.objects.values('name', 'description', 'price')
+                            .filter(id=request.data['id']))))
 
     return response
 

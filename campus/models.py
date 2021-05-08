@@ -7,6 +7,7 @@ from django.db import models
 
 # Create your models here.
 class Students(models.Model):
+    dni = models.CharField(max_length=30)
     fullname = models.CharField(max_length=30)
     password = models.CharField(validators=[CommonPasswordValidator], max_length=254, default='-')
     email = models.EmailField(max_length=50, default='-')
@@ -24,7 +25,7 @@ class Teachers(models.Model):
 class Courses(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
-    price = models.DecimalField(max_digits=5, decimal_places=2, default=1450.00, blank=True)
+    price = models.IntegerField(default=1450)
 
 
 class Subjects(models.Model):
