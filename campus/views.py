@@ -156,7 +156,7 @@ def show_course(request):
 @api_view(['POST'])
 def show_all_courses(request):
     response = JsonResponse(
-        dict(course=list(Courses.objects.values('name', 'description', 'price'))))
+        dict(course=list(Courses.objects.values('name', 'year', 'description', 'price'))))
 
     return response
 

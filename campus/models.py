@@ -24,6 +24,7 @@ class Teachers(models.Model):
 
 class Courses(models.Model):
     name = models.CharField(max_length=50)
+    year = models.IntegerField()
     description = models.TextField()
     price = models.IntegerField(default=1450)
 
