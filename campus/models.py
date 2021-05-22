@@ -38,9 +38,13 @@ class Subjects(models.Model):
 
 class Content(models.Model):
     title = models.CharField(max_length=30)
-    description = models.CharField(max_length=30)
-    content = models.FileField(blank=True)
+    description = models.CharField(max_length=100)
+    content = models.CharField(max_length=30)
+        # models.FileField(blank=True)
     date_start = models.DateField(auto_now_add=True, blank=True)
     date_end = models.DateField(blank=True)
     subject_id = models.IntegerField()
     teacher_id = models.IntegerField()
+    state = models.BooleanField()
+    subject_name = models.CharField(max_length=30)
+

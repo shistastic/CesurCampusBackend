@@ -146,8 +146,16 @@ def add_content(request):
 @api_view(['POST'])
 def show_subject_content(request):
     response = JsonResponse(
-        dict(content=list(Content.objects.values('title', 'description', 'content', 'date_start', 'date_end')
-                          .filter(subject_id=request.data['subject_id']))))
+        dict(content=list(Content.objects.values('title', 'description', 'state', 'subject_name')
+                          .filter(state=request.data['state']))))
+
+    return response
+
+@api_view(['POST'])
+def show_subject_course_id(request):
+    response = JsonResponse(
+        dict(subjects=list(Subjects.objects.values('name', 'description', 'teacher_id', 'course_id')
+                          .filter(course_id=request.data['course_id']))))
 
     return response
 
