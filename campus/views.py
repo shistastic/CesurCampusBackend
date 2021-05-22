@@ -26,8 +26,10 @@ def add_student(request):
 @api_view(['POST'])
 def show_student(request):
     response = JsonResponse(
-        dict(student=list(Students.objects.values('id', 'fullname', 'email', 'course_id')
+        dict(student=list(Students.objects.values('id', 'fullname', 'email', 'course_id', 'acc_type')
                           .filter(id=request.data['id']))))
+
+    # print(response)
 
     return response
 
@@ -49,7 +51,7 @@ def login(request):
     # Get user instance from email
     student = Students.objects.get(dni=dni)
     if check_password(password, student.password):
-        response = JsonResponse(dict(student=list(Students.objects.values('id', 'dni', 'fullname', 'email')
+        response = JsonResponse(dict(student=list(Students.objects.values('id', 'dni', 'fullname', 'email', 'acc_type')
                                                   .filter(id=student.id))))
     else:
         response = 400
