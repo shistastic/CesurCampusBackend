@@ -1,8 +1,11 @@
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Students, Teachers, Courses, Subjects, Content
 from django.contrib.auth.hashers import make_password, check_password
+
+import stripe
 
 
 # Create your views here.
@@ -93,9 +96,10 @@ def add_teacher(request):
 def add_course(request):
     name = request.data['name']
     description = request.data['description']
+    year = request.data['year']
 
     try:
-        course = Courses.objects.create(name=name, description=description)
+        course = Courses.objects.create(name=name, description=description, year=year)
         course.save()
         return Response(200)
     except Exception as e:
@@ -119,6 +123,7 @@ def add_subject(request):
         print(e)
         return Response(400)
 
+
 @api_view(['POST'])
 def add_content(request):
     title = request.data['title']
@@ -130,12 +135,13 @@ def add_content(request):
 
     try:
         content = Content.objects.create(title=title, description=description, content=content,
-                                          date_end=date_end, subject_id=subject_id, teacher_id=teacher_id)
+                                         date_end=date_end, subject_id=subject_id, teacher_id=teacher_id)
         content.save()
         return Response(200)
     except Exception as e:
         print(e)
         return Response(400)
+
 
 @api_view(['POST'])
 def show_subject_content(request):
@@ -150,7 +156,16 @@ def show_subject_content(request):
 def show_course(request):
     response = JsonResponse(
         dict(course=list(Courses.objects.values('name', 'description', 'price')
-                            .filter(id=request.data['id']))))
+                         .filter(id=request.data['id']))))
+
+    return response
+
+
+@api_view(['POST'])
+def show_course_year(request):
+    response = JsonResponse(
+        dict(course=list(Courses.objects.values('id', 'name', 'description', 'price', 'year')
+                         .filter(year=request.data['year']))))
 
     return response
 
@@ -158,7 +173,32 @@ def show_course(request):
 @api_view(['POST'])
 def show_all_courses(request):
     response = JsonResponse(
-        dict(course=list(Courses.objects.values('name', 'year', 'description', 'price'))))
+        dict(course=list(Courses.objects.values('id', 'name', 'year', 'description', 'price'))))
 
     return response
 
+
+stripe.api_key = "sk_test_51IaKKkGzLhkB9n77l28uh9cSIjWCwvuXji5bscyo0LjQ4YfS0wP2IU4671ywM6syyhkfUszbA1aqQNBYbqXLVb4F00Rc1t0RcM"
+
+
+@csrf_exempt
+def pay_course(request):
+    if request.method == 'POST':
+        print('Data:', request.POST)
+        try:
+            amount = request.POST['amount']
+            customer = stripe.Customer.create(
+                email=request.POST['email'],
+                name=request.POST['nickname'],
+                source=request.POST['stripeToken']
+            )
+
+            charge = stripe.Charge.create(
+                customer=customer,
+                amount=amount,
+                currency='eur',
+                description='CesurCampus',
+            )
+            return HttpResponse(200)
+        except:
+            return HttpResponse(400)

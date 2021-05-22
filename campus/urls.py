@@ -18,5 +18,8 @@ urlpatterns = [
     path('showcontent/', views.show_subject_content, name="add_content"),
 
     path('showcourses/', views.show_course, name="show_courses"),
+    path('showcoursesyear/', views.show_course_year, name="show_course_year"),
     path('showallcourses/', views.show_all_courses, name="show_all_courses"),
+
+    path('payCourse/', views.pay_course, name="pay_course"),
 ]
