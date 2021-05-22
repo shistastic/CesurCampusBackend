@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.password_validation import CommonPasswordValidator
 from django.db import models
 
@@ -6,6 +7,8 @@ from django.db import models
 
 
 # Create your models here.
+
+
 class Students(models.Model):
     dni = models.CharField(max_length=30)
     fullname = models.CharField(max_length=30)
