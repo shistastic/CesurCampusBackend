@@ -176,7 +176,7 @@ def add_content(request):
 @api_view(['POST'])
 def show_subject_content(request):
     response = JsonResponse(
-        dict(content=list(Content.objects.values('id', 'title', 'description', 'content', 'state', 'subject_id', 'subject_name')
+        dict(content=list(Content.objects.values('id', 'title', 'description', 'content', 'state', 'subject_id', 'subject_name', 'date_end')
                           .filter(state=request.data['state']))))
 
     return response
