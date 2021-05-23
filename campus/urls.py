@@ -5,10 +5,12 @@ from . import views
 urlpatterns = [
     #Insert Operations
     path('addstudent/', views.add_student, name="add_student"),
-    path('addteacher/', views.add_teacher, name="add_teacher"),
+    path('updateuser/', views.update_user, name="update_user"),
+
     path('addcourse/', views.add_course, name="add_course"),
     path('addsubject/', views.add_subject, name="add_subject"),
     path('addcontent/', views.add_content, name="add_content"),
+    path('addassignment/', views.add_assignment, name="add_assignment"),
 
     path('login/', views.login, name="login"),
 
@@ -16,7 +18,8 @@ urlpatterns = [
     path('showstudentcourse/', views.show_student_course, name="show_student_course"),
     path('showsubject/', views.show_subject_course_id, name="show_subject_course_id"),
 
-    path('showcontent/', views.show_subject_content, name="add_content"),
+    path('showcontent/', views.show_subject_content, name="show_content"),
+    path('showcontentunit/', views.show_subject_content_unit, name="add_content"),
 
     path('showcourses/', views.show_course, name="show_courses"),
     path('showcoursesyear/', views.show_course_year, name="show_course_year"),

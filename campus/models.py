@@ -10,20 +10,13 @@ from django.db import models
 from django.template.defaulttags import now
 
 
-class Students(models.Model):
+class User(models.Model):
     dni = models.CharField(max_length=30)
     fullname = models.CharField(max_length=30)
     password = models.CharField(validators=[CommonPasswordValidator], max_length=254, default='-')
     email = models.EmailField(max_length=50, default='-')
     course_id = models.IntegerField(default=-1)
     acc_type = models.IntegerField(default=0)
-
-
-class Teachers(models.Model):
-    fullname = models.CharField(max_length=30)
-    password = models.CharField(validators=[CommonPasswordValidator], max_length=254, default='-')
-    email = models.EmailField(max_length=50)
-    acc_type = models.IntegerField(default=1)
 
 
 class Courses(models.Model):
@@ -51,4 +44,11 @@ class Content(models.Model):
     teacher_id = models.IntegerField()
     state = models.BooleanField()
     subject_name = models.CharField(max_length=30)
+
+
+class Assignments(models.Model):
+    title = models.CharField(max_length=30)
+    content = models.FileField(default='-')
+    content_id = models.IntegerField()
+
 

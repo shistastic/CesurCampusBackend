@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from CesurCampusBackend import settings
-from .models import Students, Teachers, Courses, Subjects, Content
+from .models import User, Courses, Subjects, Content
 from django.contrib.auth.hashers import make_password, check_password
 
 import stripe
@@ -45,7 +45,7 @@ def add_student(request):
     password = make_password(request.data['password'])
 
     try:
-        student = Students.objects.create(fullname=fullname, dni=dni, email=email, password=password)
+        student = User.objects.create(fullname=fullname, dni=dni, email=email, password=password)
         student.save()
         return Response(200)
     except Exception as e:
@@ -56,7 +56,7 @@ def add_student(request):
 @api_view(['POST'])
 def show_student(request):
     response = JsonResponse(
-        dict(student=list(Students.objects.values('id', 'fullname', 'email', 'course_id', 'acc_type')
+        dict(student=list(User.objects.values('id', 'dni', 'fullname', 'email', 'course_id', 'acc_type')
                           .filter(id=request.data['id']))))
 
     # print(response)
@@ -67,7 +67,7 @@ def show_student(request):
 @api_view(['POST'])
 def show_student_course(request):
     response = JsonResponse(
-        dict(student=list(Students.objects.values('id', 'fullname', 'email', 'course_id')
+        dict(student=list(User.objects.values('id', 'fullname', 'email', 'course_id')
                           .filter(course_id=request.data['course_id']))))
 
     return response
@@ -79,44 +79,29 @@ def login(request):
     password = request.data['password']
 
     # Get user instance from email
-    student = Students.objects.get(dni=dni)
+    student = User.objects.get(dni=dni)
     if check_password(password, student.password):
-        response = JsonResponse(dict(student=list(Students.objects.values('id', 'dni', 'fullname', 'email', 'acc_type')
+        response = JsonResponse(dict(student=list(User.objects.values('id', 'dni', 'fullname', 'email', 'acc_type', 'course_id')
                                                   .filter(id=student.id))))
     else:
         response = 400
 
-    # if student is not None:
-    #
-    #     if check_password(password, student.password):
-    #         response = JsonResponse(dict(student=list(Students.objects.values('id', 'fullname', 'email')
-    #                                                  .filter(id=student.id))))
-    #
-    #     response = 400
-    #     teacher = Teachers.objects.get(email=email)
-    #
-    # if teacher is not None:
-    #     if check_password(password, teacher.password):
-    #         response = JsonResponse(dict(teacher=list(Teachers.objects.values('id', 'fullname', 'email')
-    #                                                  .filter(id=teacher.id))))
-    #     response = 400
-
     return HttpResponse(response)
 
 
-@api_view(['POST'])
-def add_teacher(request):
-    fullname = request.data['fullname']
-    email = request.data['email']
-    password = make_password(request.data['password'])
-
-    try:
-        teacher = Teachers.objects.create(fullname=fullname, email=email, password=password)
-        teacher.save()
-        return Response(200)
-    except Exception as e:
-        print(e)
-        return Response(400)
+# @api_view(['POST'])
+# def add_teacher(request):
+#     fullname = request.data['fullname']
+#     email = request.data['email']
+#     password = make_password(request.data['password'])
+#
+#     try:
+#         teacher = Teachers.objects.create(fullname=fullname, email=email, password=password)
+#         teacher.save()
+#         return Response(200)
+#     except Exception as e:
+#         print(e)
+#         return Response(400)
 
 
 @api_view(['POST'])
@@ -171,6 +156,51 @@ def add_content(request):
     except Exception as e:
         print(e)
         return Response(400)
+
+
+@api_view(['POST'])
+def add_assignment(request):
+    title = request.data['title'],
+    content = request.FILES['content'],
+    content_id = request.data['content_id']
+
+
+    try:
+        content = Content.objects.create(title=title, content=content, id=content_id)
+        content.save()
+        return Response(200)
+    except Exception as e:
+        print(e)
+        return Response(400)
+
+
+@api_view(['POST'])
+def update_user(request):
+    # Get fields to update
+    dni = request.data['dni']
+    fullname = request.data['fullname']
+    email = request.data['email']
+
+    # Select user by id and update fields
+    try:
+        user = User.objects.get(id=request.data['id'])
+        user.name = fullname
+        user.email = email
+        user.dni = dni
+        user.save(update_fields=['fullname', 'email', 'dni'])
+
+        return Response(200)
+    except:
+        return Response(400)
+
+
+@api_view(['POST'])
+def show_subject_content_unit(request):
+    response = JsonResponse(
+        dict(content=list(Content.objects.values('id', 'title', 'description', 'content', 'state', 'subject_id', 'subject_name', 'date_end')
+                          .filter(title__istartswith=request.data['unit'], subject_name=request.data['subject_name']))))
+
+    return response
 
 
 @api_view(['POST'])
