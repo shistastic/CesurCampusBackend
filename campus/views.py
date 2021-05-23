@@ -2,6 +2,8 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
+from CesurCampusBackend import settings
 from .models import Students, Teachers, Courses, Subjects, Content
 from django.contrib.auth.hashers import make_password, check_password
 
@@ -9,6 +11,31 @@ import stripe
 
 
 # Create your views here.
+@api_view(['POST'])
+def simple_upload(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        content = Content.objects.create(content=myfile)
+        content.save()
+        # fs = FileSystemStorage()
+        # filename = fs.save(myfile.name, myfile)
+
+        return Response(200)
+    else:
+        return Response(400)
+
+
+@api_view(['GET'])
+def show_image(request, id):
+    media_path = settings.MEDIA_ROOT
+    print(media_path)
+    content = Content.objects.get(id=id)
+
+    image_data = open(media_path + "\\" + str(content.content), "rb").read()
+    return HttpResponse(image_data, content_type="application/pdf")
+
+
+
 # INSERT OPERATIONS
 @api_view(['POST'])
 def add_student(request):
@@ -128,14 +155,17 @@ def add_subject(request):
 def add_content(request):
     title = request.data['title']
     description = request.data['description']
-    content = request.FILES['content']
-    date_end = request.data['date_end']
+    # date_end = request.data['date_end']
     subject_id = request.data['subject_id']
     teacher_id = request.data['teacher_id']
+    subject_name = request.data['subject_name']
+    myfile = request.FILES['content']
+    state = request.data['state']
+
 
     try:
-        content = Content.objects.create(title=title, description=description, content=content,
-                                         date_end=date_end, subject_id=subject_id, teacher_id=teacher_id)
+        content = Content.objects.create(title=title, description=description, state=state,
+                                         subject_id=subject_id, subject_name=subject_name, teacher_id=teacher_id, content=myfile)
         content.save()
         return Response(200)
     except Exception as e:

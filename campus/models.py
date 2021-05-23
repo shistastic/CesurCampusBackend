@@ -7,6 +7,7 @@ from django.db import models
 
 
 # Create your models here.
+from django.template.defaulttags import now
 
 
 class Students(models.Model):
@@ -42,10 +43,10 @@ class Subjects(models.Model):
 class Content(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
-    content = models.CharField(max_length=30)
+    content = models.FileField(default='-')
         # models.FileField(blank=True)
     date_start = models.DateField(auto_now_add=True, blank=True)
-    date_end = models.DateField(blank=True)
+    date_end = models.DateField(auto_now_add=True, blank=True)
     subject_id = models.IntegerField()
     teacher_id = models.IntegerField()
     state = models.BooleanField()

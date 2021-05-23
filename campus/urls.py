@@ -23,4 +23,7 @@ urlpatterns = [
     path('showallcourses/', views.show_all_courses, name="show_all_courses"),
 
     path('payCourse/', views.pay_course, name="pay_course"),
+
+    path('showcontent/<int:id>/', views.show_image, name='show_image'),
+
 ]
