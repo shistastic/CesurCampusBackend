@@ -18,6 +18,8 @@ urlpatterns = [
     path('showstudentcourse/', views.show_student_course, name="show_student_course"),
     path('showsubject/', views.show_subject_course_id, name="show_subject_course_id"),
 
+    path('showcontentAssign/', views.show_content_assignment, name="show_subject_course_id"),
+
     path('showcontent/', views.show_subject_content, name="show_content"),
     path('showcontentunit/', views.show_subject_content_unit, name="add_content"),
 

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from CesurCampusBackend import settings
-from .models import User, Courses, Subjects, Content
+from .models import User, Courses, Subjects, Content, Assignments
 from django.contrib.auth.hashers import make_password, check_password
 
 import stripe
@@ -161,12 +161,10 @@ def add_content(request):
 @api_view(['POST'])
 def add_assignment(request):
     title = request.data['title'],
-    content = request.FILES['content'],
     content_id = request.data['content_id']
 
-
     try:
-        content = Content.objects.create(title=title, content=content, id=content_id)
+        content = Assignments.objects.create(title=title, content_id=content_id)
         content.save()
         return Response(200)
     except Exception as e:
@@ -210,6 +208,16 @@ def show_subject_content(request):
                           .filter(state=request.data['state']))))
 
     return response
+
+
+@api_view(['POST'])
+def show_content_assignment(request):
+    response = JsonResponse(
+        dict(content=list(Assignments.objects.values('title')
+                          .filter(content_id=request.data['content_id']))))
+
+    return response
+
 
 @api_view(['POST'])
 def show_subject_course_id(request):

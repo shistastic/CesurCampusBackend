@@ -48,7 +48,7 @@ class Content(models.Model):
 
 class Assignments(models.Model):
     title = models.CharField(max_length=30)
-    content = models.FileField(default='-')
-    content_id = models.IntegerField()
+    content = models.FileField(default=' ')
+    content_id = models.IntegerField(default='2', unique=False)
 
 
