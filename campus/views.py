@@ -144,7 +144,7 @@ def add_content(request):
     subject_id = request.data['subject_id']
     teacher_id = request.data['teacher_id']
     subject_name = request.data['subject_name']
-    myfile = request.FILES['content']
+    # myfile = request.FILES['content']
     state = request.data['state']
 
 
